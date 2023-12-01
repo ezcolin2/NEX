@@ -1,0 +1,49 @@
+version: '3.1'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+
+  api-server:
+    build: 
+        context: ./backend
+        dockerfile: Dockerfile
+    # command: gunicorn --bind 0.0.0.0:5000 app:app
+    command: python app.py
+    env_file:
+      - .env
+    ports:
+      - 5000:5000
+    environment:
+        MONGODB_HOST: ${MONGO_HOST}
+        MONGODB_USERNAME: ${MONGO_USERNAME}
+        MONGODB_PASSWORD: ${MONGO_PASSWORD}
+    # volumes:
+    #     - appdata:/var/www/
+    depends_on: 
+        - mongo
+volumes:
+  mongodb_data:
+  

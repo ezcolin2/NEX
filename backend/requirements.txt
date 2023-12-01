@@ -1,0 +1,3 @@
+Flask
+flask-mongoengine
+jinja2==3.0.3
