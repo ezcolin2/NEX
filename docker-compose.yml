@@ -26,6 +26,13 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
 
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - index_data:/chroma/.chroma/index
+    ports:
+      - 8000:8000
+
   api-server:
     build: 
         context: ./backend
@@ -40,10 +47,18 @@ services:
         MONGODB_HOST: ${MONGO_HOST}
         MONGODB_USERNAME: ${MONGO_USERNAME}
         MONGODB_PASSWORD: ${MONGO_PASSWORD}
-    # volumes:
-    #     - appdata:/var/www/
+        OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+        - server_data:/app/documents
+        - server_data:/app/resources
     depends_on: 
         - mongo
+        - chroma
 volumes:
   mongodb_data:
+    external: true
+  server_data:
+    external: true
+  index_data:
+    external: true
   

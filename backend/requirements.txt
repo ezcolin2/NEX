@@ -1,3 +1,18 @@
 Flask
 flask-mongoengine
 jinja2==3.0.3
+werkzeug
+flask_api
+langchain
+chromadb
+openai
+unstructured
+pdf2image
+pikepdf
+pypdf
+pdfminer.six
+opencv-python
+pandas
+unstructured_pytesseract
+# unstructured_inference
+unstructured_inference
