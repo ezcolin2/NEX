@@ -6,6 +6,7 @@ from http import HTTPStatus
 from werkzeug.utils import secure_filename
 import uuid
 from chain.ExtractConversationChain import *
+
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
     'host': os.environ['MONGODB_HOST'],
@@ -16,6 +17,7 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine()
 db.init_app(app)
+
 
 @app.route("/api")
 def index():
@@ -60,7 +62,8 @@ def upload_file():
 # 소설 파일 전처리
 @app.route('/files/<uuid>/process', methods=['GET'])
 def process_document(uuid):
-    document_load_and_split(uuid)
+    collection, db= document_load_and_split(uuid)
+    extract_conversation(collection, db)
     
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)

@@ -6,6 +6,8 @@ flask_api
 langchain
 chromadb
 openai
+
+# unstructured pdf loader
 unstructured
 pdf2image
 pikepdf
@@ -14,5 +16,7 @@ pdfminer.six
 opencv-python
 pandas
 unstructured_pytesseract
-# unstructured_inference
 unstructured_inference
+# langchain
+langchainhub
+tiktoken
