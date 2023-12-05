@@ -6,7 +6,8 @@ from http import HTTPStatus
 from werkzeug.utils import secure_filename
 import uuid
 from chain.ExtractConversationChain import *
-
+from agent.agents import *
+from chatbot.ChatBot import *
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
     'host': os.environ['MONGODB_HOST'],
@@ -17,7 +18,8 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine()
 db.init_app(app)
-
+import os
+print(os.getenv("OPENAI_API_KEY"))
 
 @app.route("/api")
 def index():
@@ -62,8 +64,52 @@ def upload_file():
 # 소설 파일 전처리
 @app.route('/files/<uuid>/process', methods=['GET'])
 def process_document(uuid):
-    collection, db= document_load_and_split(uuid)
-    extract_conversation(collection, db)
+    document_load_and_split(uuid)
+    return jsonify({
+            'code':HTTPStatus.OK
+    })
+
+# 모든 소설 가져오기
+@app.route('/novels', methods=['GET'])
+def find_all_novels():
+    novels = Novel.objects
+    return jsonify({
+        'novels' : novels
+    })
     
+# 특정 소설의 정보 가져오기
+@app.route('/novels/<id>', methods=['GET'])
+def find_novel_by_id(id):
+    novel = Novel.objects.get(id=id)
+    novelCharacters = NovelCharacter.objects.filter(novel=novel)
+    return jsonify({
+        'novel' : novel,
+        'characters' : novelCharacters
+    })
+# 대화
+@app.route('/chat', methods=['POST'])
+def chatting():
+    body = request.get_json()
+    novel_id = body['novelId']
+    character_id = body['characterId']
+    query = body['query']
+    
+    novel = Novel.objects.get(id=novel_id)
+    collection = chroma_client.get_or_create_collection(name=novel.uuid, embedding_function=embedding_functions.OpenAIEmbeddingFunction(
+        api_key = os.getenv("OPENAI_API_KEY")
+    ))
+    db = Chroma(
+        client = chroma_client,
+        collection_name=novel.uuid,
+        embedding_function = OpenAIEmbeddings(api_key = os.getenv("OPENAI_API_KEY"))
+    )
+    retriever = db.as_retriever()
+    chatbot = ChatBot(character_id, retriever, novel.name)
+    res, url = chatbot.chat(query)
+
+    return jsonify({
+        'res' : res,
+        'imageUrl' : url
+    })
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)

@@ -1,0 +1,88 @@
+@font-face {
+  font-family: abster;
+  src: url(../../public/font/abster-webfont.woff) format('woff');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(../../public/nex_background.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.container .header {
+  width: 80%;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container .header h1 a {
+  text-decoration: none;
+  color: white;
+  font-family: abster;
+}
+
+.container .nex_container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 40%;
+  height: 40vh;
+  margin-top: 30px;
+  background-color: rgb(31, 31, 31);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload_container {
+  width: 100%;
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  border: 4px dashed #19c37d;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.upload_button {
+  background-color: #19c37d;
+  color: #f7fff7;
+  width: 140px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  margin: 10px;
+  padding: 15px 40px;
+  cursor: pointer;
+}
+
+.btn_remove {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.dropzone {
+  margin-bottom: 20px;
+}

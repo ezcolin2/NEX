@@ -47,13 +47,22 @@ services:
         MONGODB_HOST: ${MONGO_HOST}
         MONGODB_USERNAME: ${MONGO_USERNAME}
         MONGODB_PASSWORD: ${MONGO_PASSWORD}
-        OPENAI_API_KEY: ${OPENAI_API_KEY}
+        OPENAI_API_KEY: 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
+        SERPAPI_API_KEY: ${SERPAPI_API_KEY}
     volumes:
         - server_data:/app/documents
         - server_data:/app/resources
     depends_on: 
         - mongo
         - chroma
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - ./front:/usr/src/app
+    depends_on:
+      - api-server
 volumes:
   mongodb_data:
     external: true

@@ -20,3 +20,4 @@ unstructured_inference
 # langchain
 langchainhub
 tiktoken
+google-search-results

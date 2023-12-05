@@ -4,7 +4,7 @@ class Novel(Document):
     summary = StringField()
     url = StringField()
     uuid = StringField()
-class Character(Document):
+class NovelCharacter(Document):
     name = StringField()
     appearance = StringField()
     conversations = ListField(StringField(), default=[])
