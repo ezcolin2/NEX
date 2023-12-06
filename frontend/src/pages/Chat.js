@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './Chat.css';
+import { useLocation } from 'react-router-dom';
 
 function Chat() {
-  const [novelText, setNovelText] = useState(''); // 소설 텍스트 상태
-  const [userInput, setUserInput] = useState(''); // 사용자 입력 상태
+  const [novelText, setNovelText] = useState(''); 
+  const [userInput, setUserInput] = useState(''); 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const novelid = searchParams.get('novelid');
+  const characterId = searchParams.get('character_id');
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState('nex_background.jpg');
   
   useEffect(() => {
     const text = document.querySelector(".novel_text");
@@ -27,24 +34,27 @@ function Chat() {
     }
   }, [novelText]);
 
-  // 사용자가 질문을 보내는 함수
-  const handleSendQuestion = () => {
-    setNovelText('');
-    // 여기에서 사용자 입력에 대한 로직을 추가할 수 있습니다.
-    console.log('User Question:', userInput);
-
-    // 여기에서 소설 등장인물의 대답을 생성하는 로직을 추가할 수 있습니다.
-    const characterResponse = '소설 등장인물의 대답...';
-
-    // 소설 텍스트에 사용자 입력과 등장인물의 대답을 추가
-    setNovelText(prevText => prevText + `\n\n${userInput}\n${characterResponse}`);
-
-    // 사용자 입력 초기화
-    setUserInput('');
+  const handleSendQuestion = () => {  
+    axios.post('http://localhost:5000/chat', {
+      novelId: novelid,
+      characterId: characterId,
+      query: userInput
+    })
+      .then(response => {
+        console.log('Response from server:', response.data);
+        const characterResponse = response.data.res;
+        const imageUrl = response.data.imageUrl;
+        setBackgroundImageUrl(imageUrl);
+        setNovelText(prevText => prevText + `\n\n${characterResponse}`);
+        setUserInput('');
+      })
+      .catch(error => {
+        console.error('Error sending POST request:', error);
+      });
   };
 
   return (
-    <div className="chat_container">
+    <div className="chat_container" style={{ backgroundImage: `url(${backgroundImageUrl})`, backgroundSize: 'cover' }}>
       <div className='chat_box'>
         <div className='chat_text_box'>
           {novelText && <div className="novel_text">{novelText}</div>}
@@ -56,7 +66,9 @@ function Chat() {
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Enter your question.."
           />
-          <button className='btn_submit' onClick={handleSendQuestion}><img className='icon_send' src='send.png' alt="send" /></button>
+          <button className='btn_submit' onClick={handleSendQuestion}>
+            <img className='icon_send' src='send.png' alt="send" />
+          </button>
         </div>
       </div>
     </div>

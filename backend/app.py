@@ -8,7 +8,11 @@ import uuid
 from chain.ExtractConversationChain import *
 from agent.agents import *
 from chatbot.ChatBot import *
+from flask_cors import CORS
+from flask_restful import Api
 app = Flask(__name__)
+CORS(app, supports_credentials=True, origin="http://localhost:3000", methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"])
+api = Api(app)
 app.config['MONGODB_SETTINGS'] = {
     'host': os.environ['MONGODB_HOST'],
     'username': os.environ['MONGODB_USERNAME'],
@@ -59,7 +63,8 @@ def upload_file():
     return jsonify({
             'code':HTTPStatus.CREATED, 
             'documentName':document_name,
-            'documentUrl':document_url
+            'documentUrl':document_url,
+            'documentUuid':documentUuid
     })
 # 소설 파일 전처리
 @app.route('/files/<uuid>/process', methods=['GET'])

@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import './SelectNovel.css'
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function NovelInput() {
   const navigate = useNavigate();
@@ -10,28 +11,18 @@ function NovelInput() {
   const navigateToCharacter = (selectedNovel) => {
     navigate(`/selectcharacter?novel=${encodeURIComponent(selectedNovel)}`);
   }
-  const novels = [
-    "운수 좋은날 1",
-    "운수 좋은날 2",
-    "운수 좋은날 3",
-    "운수 좋은날 4",
-    "운수 좋은날 5",
-    "운수 좋은날 1",
-    "운수 좋은날 2",
-    "운수 좋은날 3",
-    "운수 좋은날 4",
-    "운수 좋은날 5",
-    "운수 좋은날 1",
-    "운수 좋은날 2",
-    "운수 좋은날 3",
-    "운수 좋은날 4",
-    "운수 좋은날 5",
-    "운수 좋은날 1",
-    "운수 좋은날 2",
-    "운수 좋은날 3",
-    "운수 좋은날 4",
-    "운수 좋은날 5",
-  ];
+  const [novels, setNovels] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:5000/novels') // Replace with your actual API endpoint
+      .then(response => {
+        setNovels(response.data.novels);
+      })
+      .catch(error => {
+        console.error('Error fetching novel list:', error);
+      });
+  }, []); // Empty dependency array to run the effect only once when the component mounts
+   
+
   return (
     <div className="container">
       <div className="header">
@@ -46,7 +37,7 @@ function NovelInput() {
           <div className="novellist">
             <ul className="novel_list">
               {novels.map((novel, index) => (
-                <li className="novel" onClick={() => navigateToCharacter(novel)} key={index}>{novel}</li>
+                <li className="novel" onClick={() => navigateToCharacter(novel._id.$oid)} key={index}>{novel.name}</li>
               ))}
             </ul>
           </div>

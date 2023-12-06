@@ -1,44 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './SelectCharacter.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function SelectCharacter() {
   const navigate = useNavigate();
-  const goChat = (name) => {
-    navigate(`/chat?name=${name}`);
-  }
-  const characters = [
-    { id: 1, name: "Rick", image: "Rick.jpg" },
-    { id: 2, name: "Morty", image: "Rick.jpg" },
-    { id: 3, name: "Summer", image: "Rick.jpg" },
-    { id: 4, name: "Beth", image: "Rick.jpg" },
-    { id: 5, name: "Jerry", image: "Rick.jpg" },
-    { id: 6, name: "Abadango", image: "Rick.jpg" },
-    { id: 7, name: "Abradolf", image: "Rick.jpg" },
-    { id: 8, name: "Adjudicator", image: "Rick.jpg" },
-  ];
+  const location = useLocation();
+  const [characters, setCharacters] = useState([]);
 
-  const imageGenerator = async () => {
-    const response = await fetch(
-      "https://api.openai.com/v1/images/generations",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:
-            "Bearer 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",
-          "User-Agent": "Chrome",
-        },
-        body: JSON.stringify({
-          prompt: `A photograph of a white Siamese cat.`,
-          n: 1,
-          size: "512x512",
-        }),
-      }
-    );
-    let data = await response.json();
-    console.log(data);
-  }
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const novelId = searchParams.get("novel");
+    console.log("Novel ID from URL:", novelId);
+
+    const getCharacter = () => {
+      axios.get(`http://localhost:5000/novels/${novelId}`) // Update endpoint based on your API structure
+        .then(response => {
+          console.log(response);
+          setCharacters(response.data.characters); // Assuming your API response has a 'characters' property
+        })
+        .catch(error => {
+          console.error('Error fetching characters:', error);
+        });
+    };
+
+    getCharacter(); // Call the function to fetch characters
+  }, [location.search]);
+
+  const goChat = (novelid, character_id) => {
+    navigate(`/chat?novelid=${novelid}&character_id=${character_id}`);
+  };
 
   return (
     <div className="container">
@@ -48,14 +39,13 @@ function SelectCharacter() {
       <div className="select_container">
         <h1 className="select_header">SELECT CHARACTER</h1>
         <div className="character_container">
-          {characters.map(character => (
-            <div key={character.id} className="character_card" onClick={() => goChat(character.name)}>
-              <img src={character.image} alt={character.name} />
-              <p>{character.name}</p>
+          {characters.map((character, index) => (
+            <div key={index} className="character_card" onClick={() => goChat(character.novel.$oid, character._id.$oid)}>
+              <img src='person.png' alt={character.name} />
+              <p className='charac_name'>{character.name}</p>
             </div>
           ))}
         </div>
-        <button onClick={() => {imageGenerator()}}>생성</button>
       </div>
     </div>
   );

@@ -21,3 +21,5 @@ unstructured_inference
 langchainhub
 tiktoken
 google-search-results
+flask_cors
+flask-restful
