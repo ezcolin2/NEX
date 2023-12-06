@@ -4,14 +4,15 @@ import './Chat.css';
 import { useLocation } from 'react-router-dom';
 
 function Chat() {
-  const [novelText, setNovelText] = useState(''); 
-  const [userInput, setUserInput] = useState(''); 
+  const [novelText, setNovelText] = useState('');
+  const [userInput, setUserInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const novelid = searchParams.get('novelid');
   const characterId = searchParams.get('character_id');
   const [backgroundImageUrl, setBackgroundImageUrl] = useState('nex_background.jpg');
-  
+
   useEffect(() => {
     const text = document.querySelector(".novel_text");
 
@@ -34,7 +35,8 @@ function Chat() {
     }
   }, [novelText]);
 
-  const handleSendQuestion = () => {  
+  const handleSendQuestion = () => {
+    setIsLoading(true);
     axios.post('http://localhost:5000/chat', {
       novelId: novelid,
       characterId: characterId,
@@ -47,14 +49,17 @@ function Chat() {
         setBackgroundImageUrl(imageUrl);
         setNovelText(prevText => prevText + `\n\n${characterResponse}`);
         setUserInput('');
+        setIsLoading(false);
       })
       .catch(error => {
         console.error('Error sending POST request:', error);
+        setIsLoading(false);
       });
   };
 
   return (
     <div className="chat_container" style={{ backgroundImage: `url(${backgroundImageUrl})`, backgroundSize: 'cover' }}>
+      {isLoading && <div className="chat_loader"></div>}
       <div className='chat_box'>
         <div className='chat_text_box'>
           {novelText && <div className="novel_text">{novelText}</div>}
