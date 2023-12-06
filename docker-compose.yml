@@ -47,7 +47,7 @@ services:
         MONGODB_HOST: ${MONGO_HOST}
         MONGODB_USERNAME: ${MONGO_USERNAME}
         MONGODB_PASSWORD: ${MONGO_PASSWORD}
-        OPENAI_API_KEY: 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
+        OPENAI_API_KEY: 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
         SERPAPI_API_KEY: ${SERPAPI_API_KEY}
     volumes:
         - server_data:/app/documents

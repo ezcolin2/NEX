@@ -47,7 +47,7 @@ function Chat() {
         const characterResponse = response.data.res;
         const imageUrl = response.data.imageUrl;
         setBackgroundImageUrl(imageUrl);
-        setNovelText(prevText => prevText + `\n\n${characterResponse}`);
+        setNovelText(characterResponse);
         setUserInput('');
         setIsLoading(false);
       })
